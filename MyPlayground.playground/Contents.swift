@@ -4,23 +4,38 @@ class Calculator<T: FloatingPoint> {
         switch operation {
         case "+":
             let addOperation = AddOperation<T>()
+            //1)
             let additionResult = addOperation.add(first: first, second: second)
+            //2)
+            //let additionResult = addOperation.operationSomething(first: first, second: second)
             return additionResult
         case "-":
             let subtractOperation = SubtractOperation<T>()
+            //1)
             let subtractitionResult = subtractOperation.subtract(first: first, second: second)
+            //2)
+            //let subtractitionResult = subtractOperation.operationSomething(first: first, second: second)
             return subtractitionResult
         case "*":
             let multiPlyOperation = MultiplyOperation<T>()
+            //1)
             let multiPlyResult = multiPlyOperation.multiply(first: first, second: second)
+            //2)
+            //let multiPlyResult = multiPlyOperation.operationSomething(first: first, second: second)
             return multiPlyResult
         case "/":
             let divideOperation = DivideOperation<T>()
+            //1)
             let divideResult = divideOperation.divide(first: first, second: second)
+            //2)
+            //let divideResult = divideOperation.operationSomething(first: first, second: second)
             return divideResult
         case "%":
             let modOperation = ModOperation<T>()
+            //1)
             let modResult = modOperation.mod(first: first, second: second)
+            //2)
+            //let modResult = modOperation.operationSomething(first: first, second: second)
             return modResult
         default:
             return nil
@@ -29,6 +44,7 @@ class Calculator<T: FloatingPoint> {
 }
 //쓸일은 없겠지만 외부모듈에서 접근한다는 가정
 open class AbstractOperation<T: FloatingPoint> {
+    //1)함수명 기준으로 선언
     @available(iOS 3.0, *)
     open  func add(first: T, second: T) -> T? {
         return nil
@@ -53,27 +69,58 @@ open class AbstractOperation<T: FloatingPoint> {
     open func mod(first: T, second: T) -> T? {
         return nil
     }
+    
+    //2) 공통 함수로 선언
+    @available(iOS 3.0, *)
+    open func operationSomething(first: T, second: T) -> T? {
+        return nil
+    }
+    
 }
 final class AddOperation<T: FloatingPoint>: AbstractOperation<T> {
+    //1)
     override final func add(first: T, second: T) -> T? {
         return first + second
+    }
+    //2)
+    override final func operationSomething(first: T, second: T) -> T? {
+        return first - second
     }
 }
 
 final class SubtractOperation<T: FloatingPoint>: AbstractOperation<T> {
+    //1)
     override final func subtract(first: T, second: T) -> T? {
+        return first - second
+    }
+    //2)
+    override final func operationSomething(first: T, second: T) -> T? {
         return first - second
     }
 }
 
 final class MultiplyOperation<T: FloatingPoint>: AbstractOperation<T> {
+    //1)
     override final func multiply(first: T, second: T) -> T? {
+        return first * second
+    }
+    //2)
+    override final func operationSomething(first: T, second: T) -> T? {
         return first * second
     }
 }
 
 final class DivideOperation<T: FloatingPoint>: AbstractOperation<T> {
+    //1)
     override final func divide(first: T, second: T) -> T? {
+        if second != 0 { // 두번째 피연산자가 0일경우 정의가 성립하지 않으므로..
+            return first / second
+        } else {
+           return nil
+        }
+    }
+    //2)
+    override final func operationSomething(first: T, second: T) -> T? {
         if second != 0 { // 두번째 피연산자가 0일경우 정의가 성립하지 않으므로..
             return first / second
         } else {
@@ -82,7 +129,16 @@ final class DivideOperation<T: FloatingPoint>: AbstractOperation<T> {
     }
 }
 final class ModOperation<T: FloatingPoint>: AbstractOperation<T> {
+    //1)
     override final func mod(first: T, second: T) -> T? {
+        if second != 0 {
+            return first.truncatingRemainder(dividingBy: second)//정수형을 버리고 소수부분을 기준으로 나머지 계산된 결과를 처리함 ex) 10.5/3 -> 정수형 3 버림, 그이후 나머지 연산한 1.5를 반환
+        } else {
+            return nil
+        }
+    }
+    //2)
+    override final func operationSomething(first: T, second: T) -> T? {
         if second != 0 {
             return first.truncatingRemainder(dividingBy: second)//정수형을 버리고 소수부분을 기준으로 나머지 계산된 결과를 처리함 ex) 10.5/3 -> 정수형 3 버림, 그이후 나머지 연산한 1.5를 반환
         } else {
@@ -99,7 +155,7 @@ if let value = addResult{
     print("덧셈 -> : \(value)")
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
 }
-let subResult = calculator.calculate(operation: "-", first: -15.0, second: 3.0)
+let subResult = calculator.calculate(operation: "-", first: 1, second: 3.0)
 if let value = subResult{
     print("뺄샘 -> : \(value)")
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
@@ -121,5 +177,6 @@ if let value = modResult{
     print("나머지 -> : \(value)")
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
 }
+
 
 
