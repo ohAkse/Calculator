@@ -1,4 +1,4 @@
-//클래스 제네릭 자료 타입을 T로 할경우 Int, String에 대한 처리나 나머지 연산 처리(Swift는 실수형을 나머지 연산 할수없음)등에 대한 처리를 다 해줘야 함으로 인해 기본 타입은 실수형으로 제한
+//클래스 제네릭 자료 타입을 T로 할경우 Int, String에 대한 처리나 나머지 연산 처리(Swift는 실수형을 기준으로 바로 나머지 연산 할수없음)등에 대한 처리를 다 해줘야 함으로 인해 기본 타입은 실수형으로 제한
 class Calculator<T: FloatingPoint> {
     func calculate(operation: Character, first: T, second: T) -> T? {
         switch operation {
@@ -84,7 +84,7 @@ final class DivideOperation<T: FloatingPoint>: AbstractOperation<T> {
 final class ModOperation<T: FloatingPoint>: AbstractOperation<T> {
     override final func mod(first: T, second: T) -> T? {
         if second != 0 {
-            return first.truncatingRemainder(dividingBy: second)//Swift에선 실수형으론 나머지 연산자를 할 수 없어 정수형으로 바꾼후 나머지 연산자를 하기 위해 truncate함
+            return first.truncatingRemainder(dividingBy: second)//정수형을 버리고 소수부분을 기준으로 나머지 계산된 결과를 처리함 ex) 10.5/3 -> 정수형 3 버림, 그이후 나머지 연산한 1.5를 반환
         } else {
             return nil
         }
@@ -110,13 +110,13 @@ if let value = multiplyResult{
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
 }
 
-let divideResult = calculator.calculate(operation: "/", first: 5.0, second: 3.0)
+let divideResult = calculator.calculate(operation: "/", first: 10.5, second: 3.0)
 if let value = divideResult{
     print("나눗셈 -> : \(value)")
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
 }
 
-let modResult = calculator.calculate(operation: "%", first: 5.0, second: 2)
+let modResult = calculator.calculate(operation: "%", first: 10.5, second: 3.0)
 if let value = modResult{
     print("나머지 -> : \(value)")
     //print(Int(value)) 정수형으로 할경우 소수점버리는것은 감안
